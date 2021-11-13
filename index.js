@@ -19,29 +19,53 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect(e => {
+            const database = client.db('watchCollection')
             const productsCollection = client.db('watchCollections').collection('watch');
+            const orderCollection = database.collection('allOrders')
             // const databaseCollection=database.collection('watch');
             //add product
             app.post('/addProduct', (req, res) => {
                 const name = req.body.name;
                 const description = req.body.description;
                 const price = req.body.price;
-                const image=req.body.image;
-                productsCollection.insertOne({ name, description, price,image }).then(result => {
+                const image = req.body.image;
+                productsCollection.insertOne({ name, description, price, image }).then(result => {
                     res.send(result.insertedCount > 0)
                 })
             })
 
             // get product detail
-            app.get('/getProduct',(req,res)=>{
+            app.get('/getProduct', (req, res) => {
                 productsCollection.find({})
-                .toArray((error,document)=>{
-                    res.send(document)
-                })
+                    .toArray((error, document) => {
+                        res.send(document)
+                    })
             });
 
 
-            //connect admin pannel
+            //post method for collecting order
+            app.post('/allOrder', async (req, res) => {
+                const allOrder = req.body;
+                const result = await orderCollection.insertOne(allOrder);
+                res.json(result);
+                console.log(result);
+            })
+
+            app.get('/allOrder', async (req, res) => {
+                const cursor = orderCollection.find()
+                const result = await cursor.toArray()
+                res.json(result);
+                console.log(result);
+            })
+
+            //delete added
+            app.delete('/allOrder/:id', async (req, res) => {
+                const id = req.params.id;
+                const query = {_id:ObjectId(id)};
+                const result = await orderCollection.deleteOne(query);
+                res.json(result);
+                console.log(result);
+            })
 
         });
 
