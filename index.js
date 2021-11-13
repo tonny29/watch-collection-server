@@ -32,7 +32,7 @@ async function run() {
                 })
             })
 
-            //get product detail
+            // get product detail
             app.get('/getProduct',(req,res)=>{
                 productsCollection.find({})
                 .toArray((error,document)=>{
@@ -55,7 +55,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('This Project Is All About Watch And Watch And Watch And Watch')
+    res.send('This Project Is All About watch')
 })
 
 app.listen(port, () => {
