@@ -23,6 +23,7 @@ async function run() {
             const productsCollection = client.db('watchCollections').collection('watch');
             const orderCollection = database.collection('allOrders');
             const userCollection = database.collection('user');
+            const userReviewCollection = database.collection('review');
             // const databaseCollection=database.collection('watch');
             //add product
             app.post('/addProduct', (req, res) => {
@@ -115,6 +116,21 @@ async function run() {
                 }
                 res.json({admin: isAdmin})
               })
+
+              //add reviews
+              app.post('/review', async (req, res) => {
+                const review = req.body;
+                const result = await userReviewCollection.insertOne(review);
+                res.json(result);
+            })
+
+            //get review
+            app.get('/review', async (req, res) => {
+                const cursor = userReviewCollection.find()
+                const result = await cursor.toArray()
+                res.json(result);
+            })
+
         });
 
     }
